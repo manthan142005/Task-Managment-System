@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// NOTE: SQLite has no native enum support, so status/priority/authProvider
+// are plain Strings with quoted default values. The app logic treats them
+// as fixed sets of string constants (see lib/types.ts on the frontend and
+// the DTOs on the backend for the allowed values).
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  fullName     String?
+  title        String?
+  username     String?
+  avatarUrl    String?
+  authProvider String   @default("GUEST")
+  themeMode    String   @default("system")
+  colorMode    String   @default("blue")
+  createdAt    DateTime @default(now())
+
+  projectsLed   Project[]      @relation("ProjectLead")
+  tasksReported Task[]         @relation("TaskReporter")
+  taskMembers   TaskMember[]
+  comments      Comment[]
+  activities    Activity[]
+}
+
+model Project {
+  id        String    @id @default(cuid())
+  title     String
+  priority  String    @default("NO_PRIORITY")
+  leadId    String?
+  lead      User?     @relation("ProjectLead", fields: [leadId], references: [id])
+  dueDate   DateTime?
+  createdAt DateTime  @default(now())
+
+  tasks Task[]
+}
+
+model Task {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  status       String    @default("TODO")
+  priority     String    @default("NO_PRIORITY")
+  startDate    DateTime?
+  dueDate      DateTime?
+  projectId    String?
+  project      Project?  @relation(fields: [projectId], references: [id])
+  reporterId   String?
+  reporter     User?     @relation("TaskReporter", fields: [reporterId], references: [id])
+  parentTaskId String?
+  parentTask   Task?     @relation("Subtasks", fields: [parentTaskId], references: [id])
+  subtasks     Task[]    @relation("Subtasks")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  members    TaskMember[]
+  labels     TaskLabel[]
+  comments   Comment[]
+  activities Activity[]
+}
+
+model TaskMember {
+  taskId String
+  userId String
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user   User @relation(fields: [userId], references: [id])
+
+  @@id([taskId, userId])
+}
+
+model TaskLabel {
+  id     String @id @default(cuid())
+  taskId String
+  name   String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  action    String
+  fieldName String?
+  oldValue  String?
+  newValue  String?
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+}

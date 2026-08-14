@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Light mode surfaces (default) */
+  --surface: #ffffff;
+  --surface-muted: #f4f4f5;
+  --border: #e4e4e7;
+  --ink: #18181b;
+  --ink-muted: #71717a;
+
+  /* Color mode: Blue (default) */
+  --accent: #6366f1;
+  --accent-fg: #ffffff;
+  --accent-soft: #eef2ff;
+}
+
+.dark {
+  --surface: #18181b;
+  --surface-muted: #27272a;
+  --border: #3f3f46;
+  --ink: #fafafa;
+  --ink-muted: #a1a1aa;
+}
+
+/* Color modes — set via data-color attribute on <html>, matches the
+   "Color Mode" picker in the profile menu (Amber / Blue / Pink / Rose / Emerald / Black) */
+[data-color='amber']  { --accent: #d97706; --accent-fg: #ffffff; --accent-soft: #fef3c7; }
+[data-color='blue']   { --accent: #6366f1; --accent-fg: #ffffff; --accent-soft: #eef2ff; }
+[data-color='pink']   { --accent: #db2777; --accent-fg: #ffffff; --accent-soft: #fce7f3; }
+[data-color='rose']   { --accent: #e11d48; --accent-fg: #ffffff; --accent-soft: #ffe4e6; }
+[data-color='emerald']{ --accent: #059669; --accent-fg: #ffffff; --accent-soft: #d1fae5; }
+[data-color='black']  { --accent: #18181b; --accent-fg: #ffffff; --accent-soft: #e4e4e7; }
+
+body {
+  background: var(--surface-muted);
+  color: var(--ink);
+}
+
+/* Priority colors — fixed regardless of accent/color-mode, matching the screenshots */
+.priority-urgent { color: #e11d48; }
+.priority-high   { color: #ea580c; }
+.priority-medium { color: #d97706; }
+.priority-low    { color: #71717a; }
+.priority-none   { color: #a1a1aa; }
