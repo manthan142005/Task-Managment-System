@@ -1,6 +1,6 @@
 'use client';
 
-import { SettingsShell } from '../profile/page';
+import { SettingsShell } from '../SettingsShell';
 import { useTheme } from '@/components/ThemeProvider';
 
 const COLOR_SWATCHES: { key: any; label: string; hex: string }[] = [
